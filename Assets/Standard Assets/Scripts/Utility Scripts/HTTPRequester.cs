@@ -20,7 +20,7 @@ public class HTTPRequester : MonoBehaviour {
 	public WWW POST(String url, Dictionary<string,string> request)
 	{
 		WWWForm form = new WWWForm();
-		foreach(KeyValuePair<String,String> post_arg in post)
+		foreach(KeyValuePair<String,String> post_arg in request)
 		{
 			form.AddField(post_arg.Key, post_arg.Value);
 		}
@@ -32,7 +32,6 @@ public class HTTPRequester : MonoBehaviour {
 	private IEnumerator WaitForRequest(WWW www)
 	{
 		yield return www;
-		// check for errors
 		if (www.error == null)
 		{
 			Debug.Log("WWW Ok!: " + www.text);
