@@ -1,5 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+//using HTTPRequester;
+//using UDPReceive;
+
 
 public class MouseOrbit : MonoBehaviour
 {
@@ -12,6 +17,26 @@ public class MouseOrbit : MonoBehaviour
 
 	private float x;
 	private float y;
+
+	private HTTPRequester hr;
+	private UDPReceive ur;
+
+	void Start()
+	{
+		WWW requestGET = hr.GET("raspberrypi.local/status");
+		Debug.Log(requestGET.text);
+
+		Dictionary<string,string> dict = new Dictionary<string,string>
+		{
+			{"ip", "169.254.152.188"},
+			{"port", "12345" }
+		};
+
+		WWW requestPOST = hr.POST("rasberrypi.local/start", dict);
+
+		requestGET = hr.GET("raspberrypi.local/status");
+		Debug.Log(requestGET.text);
+	}
 
 	void Awake()
 	{
@@ -53,5 +78,30 @@ public class MouseOrbit : MonoBehaviour
 			angle -= 360;
 		}
 		return Mathf.Clamp (angle, min, max);
+	}
+
+	void OnApplicationQuit()
+	{
+		Dictionary<string,string> dict = new Dictionary<string,string> { };
+		WWW requestPOST = hr.POST("rasberrypi.local/stop", dict);
+		WWW requestGET = hr.GET("raspberrypi.local/status");
+		Debug.Log(requestGET.text);
+	}
+
+	void UDPUpdateXY(out float param1, out float param2)
+	{
+		string packet = ur.getLatestUDPPacket();
+
+		char[] delimiterChars = { ' ', '(', ')' };
+		string blob1 = packet.Split(delimiterChars) [1];
+		if (blob1 == "None") {
+			param1 = x;
+			param2 = y;
+		} else {
+			char[] comma = { ',' };
+			string[] xyblob = blob1.Split(comma);
+			param1 = float.Parse(xyblob[0]);
+			param2 = float.Parse(xyblob[1]);
+		}
 	}
 }
