@@ -277,6 +277,49 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 88027fe26da9b444da10b6164a89c799, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &100681365
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 100681367}
+  - 114: {fileID: 100681366}
+  m_Layer: 0
+  m_Name: UDPReceive
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &100681366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 100681365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8273eb4a0cceb468eb3c6ba98047e3c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IP: 169.254.142.188
+  port: 0
+  lastReceivedUDPPacket: 
+  allReceivedUDPPackets: 
+--- !u!4 &100681367
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 100681365}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 24
 --- !u!4 &104964990 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 88027fe26da9b444da10b6164a89c799, type: 2}
@@ -3503,6 +3546,45 @@ Transform:
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 88027fe26da9b444da10b6164a89c799, type: 2}
   m_PrefabInternal: {fileID: 1105424235}
+--- !u!1 &1570493749
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1570493751}
+  - 114: {fileID: 1570493750}
+  m_Layer: 0
+  m_Name: HTTPRequester
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1570493750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1570493749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e07c161784342a4b533334438196f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1570493751
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1570493749}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 23
 --- !u!4 &1586900061 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 88027fe26da9b444da10b6164a89c799, type: 2}
@@ -3521,7 +3603,6 @@ GameObject:
   - 81: {fileID: 1594572086}
   - 114: {fileID: 1594572091}
   - 114: {fileID: 1594572092}
-  - 114: {fileID: 1594572093}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3591,7 +3672,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1594572085}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -9.378658}
+  m_LocalPosition: {x: 0, y: 11, z: -8.378658}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3607,14 +3688,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0a3a5ee192834d65ab40a58762e5119, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1794220429}
-  distance: 30
+  Target: {fileID: 1794220429}
+  Distance: 20
   xSpeed: 250
   ySpeed: 120
   yMinLimit: -96
   yMaxLimit: 170
-  x: 0
-  y: 0
+  IRWidth: 1000
+  IRHeight: 760
+  didReadSuccess: 0
 --- !u!114 &1594572092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3632,17 +3714,6 @@ MonoBehaviour:
   angularDrag: 5
   distance: 0.2
   attachToCenterOfMass: 0
---- !u!114 &1594572093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1594572085}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38e07c161784342a4b533334438196f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1595848434
 Prefab:
   m_ObjectHideFlags: 0
