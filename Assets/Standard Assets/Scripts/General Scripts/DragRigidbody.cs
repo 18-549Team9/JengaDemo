@@ -23,6 +23,12 @@ public class DragRigidbody : MonoBehaviour {
 	public bool buttonPress = false;
 	public Vector2 position;
 
+	bool getButtonPress() {
+		if (!buttonPress)
+			Debug.Log ("hello???");
+		return buttonPress;
+	}
+
 	void Start()
 	{
 		Cursor.visible = false;
@@ -31,11 +37,12 @@ public class DragRigidbody : MonoBehaviour {
 
 		// top left (0,0)
 		// bottom right (1000,760)
-		int IRWidth = 1000;
-		int IRHeight = 760;
+		int IRWidth = 1024;
+		int IRHeight = 768;
 		// bottom left: (0,0)
 		// top right: (Screen.width, Screen.height)
-
+		Debug.Log(Screen.width);
+		Debug.Log (Screen.height);
 
 		// for xScaling always subtract the scaled value from Screen.width
 		xScaling = (double)Screen.width / (double)IRWidth;
@@ -58,12 +65,12 @@ public class DragRigidbody : MonoBehaviour {
 	{
 		string blob1 = "";
 		string packet = ur.getLatestUDPPacket();
-		//Debug.Log ("packet:" + packet);
+		//Debug.Log (packet);
 		if (packet != "") {
 			char[] delimiterChars = { ',' };
 			string[] parse = packet.Split (delimiterChars);
-			blob1 = parse [1];
-			int intBlob = int.Parse (parse [1]);
+			blob1 = parse [3];
+			int intBlob = int.Parse (parse [3]);
 
 			if (intBlob == -1) {
 				// Maybe change this later because it's a little sketch that I'm checking for -1
@@ -73,6 +80,8 @@ public class DragRigidbody : MonoBehaviour {
 				// IR LED detected, record the coordinate
 				if (intBlob >= 4) {
 					buttonPress = true;
+				} else {
+					buttonPress = false;
 				}
 				param1 = float.Parse (parse [1]);
 				param2 = float.Parse (parse [2]);
@@ -96,13 +105,17 @@ public class DragRigidbody : MonoBehaviour {
 
 	void Update ()
 	{
+		buttonPress = false;
 		float temp1 = 0f;
 		float temp2 = 0f;
 		UDPUpdateXY (ref temp1, ref temp2);
 		if (didReadSuccess) {
 			x = (int) (temp1 * xScaling);
-			y = (int) (temp2 * yScaling);
+			y = Screen.height - (int) (temp2 * yScaling);
 		}
+		//Debug.Log (x);
+		//Debug.Log (y);
+
 		position = new Vector2 (x, y);
 
 		// Make sure the user pressed the mouse down
@@ -151,12 +164,13 @@ public class DragRigidbody : MonoBehaviour {
 		springJoint.connectedBody.drag = drag;
 		springJoint.connectedBody.angularDrag = angularDrag;
 		Camera mainCamera = Camera.main;
-		while (buttonPress)
+		while (this.getButtonPress())
 		{
 			Ray ray = mainCamera.ScreenPointToRay (position);
 			springJoint.transform.position = ray.GetPoint(distance);
 			yield return null;
 		}
+		Debug.Log ("reached");
 		if (springJoint.connectedBody)
 		{
 			springJoint.connectedBody.drag = oldDrag;

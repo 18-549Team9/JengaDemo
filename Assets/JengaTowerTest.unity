@@ -3683,7 +3683,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1594572085}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0a3a5ee192834d65ab40a58762e5119, type: 3}
   m_Name: 
@@ -3705,15 +3705,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1594572085}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cae09c86ad1122e5d0006ac98d76c639, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b304a4fa3dd148e094e481acadb836d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   spring: 50
   damper: 5
-  drag: 0.5
+  drag: 0.01
   angularDrag: 5
   distance: 0.2
   attachToCenterOfMass: 0
+  mainCamera: {fileID: 1594572089}
+  didReadSuccess: 0
+  buttonPress: 0
+  position: {x: 0, y: 0}
 --- !u!1001 &1595848434
 Prefab:
   m_ObjectHideFlags: 0

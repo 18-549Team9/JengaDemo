@@ -119,7 +119,7 @@ public class MouseOrbit : MonoBehaviour
 	{
 		string blob1 = "";
 		string packet = ur.getLatestUDPPacket();
-		//Debug.Log ("packet:" + packet);
+		Debug.Log ("packet: " + packet);
 		if (packet != "") {
 			char[] delimiterChars = { ',' };
 			string[] parse = packet.Split (delimiterChars);

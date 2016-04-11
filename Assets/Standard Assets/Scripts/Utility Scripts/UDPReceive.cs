@@ -33,7 +33,7 @@ public class UDPReceive : MonoBehaviour {
 	UdpClient client;
 
 	// public
-	public string IP = "169.254.142.188"; 
+	public string IP = "169.254.205.210"; 
 	public int port; // define > init
 
 	// infos
@@ -65,8 +65,8 @@ public class UDPReceive : MonoBehaviour {
 
 		Dictionary<string,string> dict = new Dictionary<string,string>
 		{
-			{"ip", "169.254.142.188"},
-			{"port", "12345" }
+			{"ip", "169.254.205.210"},
+			{"port", "12486" }
 		};
 			
 
@@ -100,12 +100,11 @@ public class UDPReceive : MonoBehaviour {
 	{
 
 		// define port
-		port = 12345;
+		port = 12486;
 
 		// status
-		print("Sending to 169.254.142.188 : "+port);
-		print("Test-Sending to this Port: nc -ul 169.254.27.195  "+port+"");
-
+		//print("Sending to 169.254.142.188 : "+port);
+		//print("Test-Sending to this Port: nc -ul 169.254.27.195  "+port+"");
 
 		receiveThread = new Thread(
 			new ThreadStart(ReceiveData));
@@ -117,22 +116,27 @@ public class UDPReceive : MonoBehaviour {
 	// receive thread
 	private  void ReceiveData()
 	{
+
+		Debug.Log ("receiving data");
 		client = new UdpClient(port);
+		Debug.Log ("successfully started client");
 		while (true)
 		{	
+			Debug.Log ("going inside loop");
 			try
 			{
+				Debug.Log ("inside try");
 				IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
-				byte[] data = client.Receive(ref anyIP);
+				Debug.Log ("right before client.receive");
 
+				byte[] data = client.Receive(ref anyIP);
+				Debug.Log ("after client.receive");
 			
 				string text = Encoding.UTF8.GetString(data);
 
 
 				// latest UDPpacket
 				lastReceivedUDPPacket=text;
-
-
 
 			}
 			catch (Exception err)
