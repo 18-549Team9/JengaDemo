@@ -33,7 +33,8 @@ public class UDPReceive : MonoBehaviour {
 	UdpClient client;
 
 	// public
-	public string IP = "169.254.205.210"; 
+	//public string IP = "169.254.205.210"; 
+	public string IP = "169.254.49.162";
 	public int port; // define > init
 
 	// infos
@@ -65,8 +66,8 @@ public class UDPReceive : MonoBehaviour {
 
 		Dictionary<string,string> dict = new Dictionary<string,string>
 		{
-			{"ip", "169.254.205.210"},
-			{"port", "12486" }
+			{"ip", "169.254.49.162"},
+			{"port", "12346" }
 		};
 			
 
@@ -100,7 +101,7 @@ public class UDPReceive : MonoBehaviour {
 	{
 
 		// define port
-		port = 12486;
+		port = 12346;
 
 		// status
 		//print("Sending to 169.254.142.188 : "+port);

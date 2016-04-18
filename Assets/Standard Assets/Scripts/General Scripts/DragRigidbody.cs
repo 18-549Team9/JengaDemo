@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class DragRigidbody : MonoBehaviour {
 
@@ -22,6 +23,14 @@ public class DragRigidbody : MonoBehaviour {
 	public bool didReadSuccess = false;
 	public bool buttonPress = false;
 	public Vector2 position;
+
+	public ArrayList headsetBlobX = new ArrayList();
+	public ArrayList headsetBlobY = new ArrayList();
+	public ArrayList headsetBlobSize = new ArrayList();
+
+	public ArrayList remainingIndexes = new ArrayList{0,1,2,3};
+
+	public ArrayList finalInformationList = new ArrayList();
 
 	bool getButtonPress() {
 		if (!buttonPress)
@@ -53,6 +62,7 @@ public class DragRigidbody : MonoBehaviour {
 
 		x = Screen.width / 2;
 		y = Screen.height / 2;
+	
 		
 	}
 
@@ -65,6 +75,8 @@ public class DragRigidbody : MonoBehaviour {
 	{
 		string blob1 = "";
 		string packet = ur.getLatestUDPPacket();
+
+		filterIRInfo ("103238, 816, 137, 4, 173, 90, 3, 484, 10, 3, 460, 412, 6");
 		//Debug.Log (packet);
 		if (packet != "") {
 			char[] delimiterChars = { ',' };
@@ -91,8 +103,87 @@ public class DragRigidbody : MonoBehaviour {
 				}
 			}
 		}
-
 	}
+
+	void filterIRInfo(String packet)
+	{
+		remainingIndexes = new ArrayList{0,1,2,3};
+		string blob1 = "";
+		//string packet = ur.getLatestUDPPacket();
+		//Debug.Log (packet);
+		char[] delimiterChars = { ',' };
+		string[] parse = packet.Split (delimiterChars);
+
+		for (int i = 1; i <= 10; i += 3) {
+			headsetBlobX.Add (float.Parse (parse [i]));
+		}
+
+		for (int i = 2; i <= 11; i += 3) {
+			headsetBlobY.Add (float.Parse (parse [i]));
+		}
+
+		for (int i = 3; i <= 12; i += 3) {
+			headsetBlobSize.Add (float.Parse (parse [i]));
+		}
+
+		float biggestSize = -1;
+		int biggestSizeIndex = -1;
+		for (int i = 0; i < 4; i++) {
+			if ((float)(headsetBlobSize[i]) > biggestSize) {
+				biggestSizeIndex = i;
+				biggestSize = (float) headsetBlobSize[i];
+			}
+		}
+
+		finalInformationList.Add (headsetBlobX [biggestSizeIndex]);
+		finalInformationList.Add (headsetBlobY [biggestSizeIndex]);
+		finalInformationList.Add (headsetBlobSize [biggestSizeIndex]);
+
+		remainingIndexes.Remove (biggestSizeIndex);
+
+		// clicking x,y,blobsize are first 3 parameters in final list now 
+
+		float smallestSize = (float)headsetBlobX[0];
+		int smallestSizeIndex = 0;
+		foreach (int i in remainingIndexes) {
+			if ((float)headsetBlobX[i] < smallestSize) {
+				smallestSizeIndex = i;
+				smallestSize = (float) headsetBlobX[i];
+			}
+		}
+
+		finalInformationList.Add (headsetBlobX [smallestSizeIndex]);
+		finalInformationList.Add (headsetBlobY [smallestSizeIndex]);
+
+		remainingIndexes.Remove (smallestSizeIndex);
+
+		// clicking x,y,blobsize, left side x,y are in the final list now
+
+		int largestSizeIndex = -1;
+		int firstIndex = (int) remainingIndexes [0];
+		int secondIndex = (int) remainingIndexes [1];
+		if ((float) (headsetBlobX [firstIndex]) > (float)(headsetBlobX [secondIndex])) {
+			largestSizeIndex = 0;
+		} else {
+			largestSizeIndex = 1;
+		}
+
+		finalInformationList.Add (headsetBlobX [largestSizeIndex]);
+		finalInformationList.Add (headsetBlobY [largestSizeIndex]);
+
+		remainingIndexes.Remove (largestSizeIndex);
+
+		// clicking x,y,blocksize, left side x,y,  right side x,y are in the final list now
+
+		int middleIndex = (int) remainingIndexes[0];
+		finalInformationList.Add (headsetBlobX [middleIndex]);
+		finalInformationList.Add (headsetBlobY [middleIndex]);
+		for (int i = 0; i < 9; i++) {
+			Debug.Log (finalInformationList [i]);
+		}
+	}
+
+	//[103238, 816, 137, 4, 173, 90, 3, 484, 10, 3, 460, 412, 6]
 
 
 	void DrawQuad(Rect position, Color color) {
