@@ -53,12 +53,12 @@ public class HeadTrack : MonoBehaviour {
 
 	bool updateHead () {
 		ArrayList temp = filterIRInfo(ur.getLatestUDPPacket());
-		firstPoint.x = temp [3];
-		firstPoint.y = temp [4];
-		secondPoint.x = temp [5];
-		secondPoint.y = temp [6];
-		topPoint.x = temp [7];
-		topPoint.y = temp [8];
+		firstPoint.x = (float)temp [3];
+		firstPoint.y = (float)temp [4];
+		secondPoint.x = (float)temp [5];
+		secondPoint.y = (float)temp [6];
+		topPoint.x = (float)temp [7];
+		topPoint.y = (float)temp [8];
 
 		if (firstPoint.x == -1 || firstPoint.y == -1 ||
 			secondPoint.x == -1 || secondPoint.y == -1 ||
