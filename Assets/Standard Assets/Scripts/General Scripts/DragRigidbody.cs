@@ -20,14 +20,14 @@ public class DragRigidbody : MonoBehaviour {
 
 	private int x;
 	private int y;
+	private int blob;
 	public bool didReadSuccess = false;
-	public bool buttonPress = false;
 	public Vector2 position;
 
 	bool getButtonPress() {
-		if (!buttonPress)
-			Debug.Log ("hello???");
-		return buttonPress;
+		if (blob >= 4)
+			return true;
+		return false;
 	}
 
 	void Start()
@@ -61,40 +61,6 @@ public class DragRigidbody : MonoBehaviour {
 	void OnGUI() {
 		Rect rectObj = new Rect(x,Screen.height-y,10,10);
 		DrawQuad (rectObj, Color.black);
-	}
-
-	void UDPUpdateXY(ref float param1, ref float param2)
-	{
-		string blob1 = "";
-		string packet = ur.getLatestUDPPacket();
-
-		filterIRInfo ("103238, 816, 137, 4, 173, 90, 3, 484, 10, 3, 460, 412, 6");
-		//Debug.Log (packet);
-		if (packet != "") {
-			char[] delimiterChars = { ',' };
-			string[] parse = packet.Split (delimiterChars);
-			blob1 = parse [3];
-			int intBlob = int.Parse (parse [3]);
-
-			if (intBlob == -1) {
-				// Maybe change this later because it's a little sketch that I'm checking for -1
-				// Put blob size instead?
-				didReadSuccess = false;
-			} else {
-				// IR LED detected, record the coordinate
-				if (intBlob >= 4) {
-					buttonPress = true;
-				} else {
-					buttonPress = false;
-				}
-				param1 = float.Parse (parse [1]);
-				param2 = float.Parse (parse [2]);
-				if (param1 > 10 && param2 > 10) {
-					// Some stupid bug with initialization, use 10 to guarantee the IR LED is on
-					didReadSuccess = true;
-				}
-			}
-		}
 	}
 
 	ArrayList filterIRInfo(String packet)
@@ -197,13 +163,14 @@ public class DragRigidbody : MonoBehaviour {
 
 	void Update ()
 	{
-		buttonPress = false;
-		float temp1 = 0f;
-		float temp2 = 0f;
-		UDPUpdateXY (ref temp1, ref temp2);
-		if (didReadSuccess) {
+		ArrayList temp = filterIRInfo (ur.lastReceivedUDPPacket);
+		float temp1 = (float)temp[0];
+		float temp2 = (float)temp[1];
+		int temp3 = (int)temp [2];
+		if (temp1 != -1 || temp2 != -1 || temp3 != -1) {
 			x = (int) (temp1 * xScaling);
 			y = Screen.height - (int) (temp2 * yScaling);
+			blob = temp3;
 		}
 		//Debug.Log (x);
 		//Debug.Log (y);
@@ -211,7 +178,7 @@ public class DragRigidbody : MonoBehaviour {
 		position = new Vector2 (x, y);
 
 		// Make sure the user pressed the mouse down
-		if (!buttonPress)
+		if (!getButtonPress())
 			return;
 
 		// We need to actually hit an object
