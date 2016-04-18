@@ -24,14 +24,6 @@ public class DragRigidbody : MonoBehaviour {
 	public bool buttonPress = false;
 	public Vector2 position;
 
-	public ArrayList headsetBlobX = new ArrayList();
-	public ArrayList headsetBlobY = new ArrayList();
-	public ArrayList headsetBlobSize = new ArrayList();
-
-	public ArrayList remainingIndexes = new ArrayList{0,1,2,3};
-
-	public ArrayList finalInformationList = new ArrayList();
-
 	bool getButtonPress() {
 		if (!buttonPress)
 			Debug.Log ("hello???");
@@ -105,9 +97,16 @@ public class DragRigidbody : MonoBehaviour {
 		}
 	}
 
-	void filterIRInfo(String packet)
+	ArrayList filterIRInfo(String packet)
 	{
-		remainingIndexes = new ArrayList{0,1,2,3};
+		ArrayList headsetBlobX = new ArrayList();
+		ArrayList headsetBlobY = new ArrayList();
+		ArrayList headsetBlobSize = new ArrayList();
+
+		ArrayList remainingIndexes = new ArrayList{0,1,2,3};
+
+		ArrayList finalInformationList = new ArrayList ();
+
 		string blob1 = "";
 		//string packet = ur.getLatestUDPPacket();
 		//Debug.Log (packet);
@@ -178,9 +177,11 @@ public class DragRigidbody : MonoBehaviour {
 		int middleIndex = (int) remainingIndexes[0];
 		finalInformationList.Add (headsetBlobX [middleIndex]);
 		finalInformationList.Add (headsetBlobY [middleIndex]);
-		for (int i = 0; i < 9; i++) {
-			Debug.Log (finalInformationList [i]);
-		}
+//		for (int i = 0; i < 9; i++) {
+//			Debug.Log (finalInformationList [i]);
+//		}
+
+		return finalInformationList;
 	}
 
 	//[103238, 816, 137, 4, 173, 90, 3, 484, 10, 3, 460, 412, 6]

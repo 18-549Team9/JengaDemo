@@ -52,7 +52,7 @@ public class HeadTrack : MonoBehaviour {
 	}
 
 	bool updateHead () {
-		List temp = tempParse ();
+		ArrayList temp = filterIRInfo(ur.getLatestUDPPacket());
 		firstPoint.x = temp [3];
 		firstPoint.y = temp [4];
 		secondPoint.x = temp [5];
@@ -85,8 +85,90 @@ public class HeadTrack : MonoBehaviour {
 		return true;
 	}
 
-	List tempParse () {
-		List x = new List();
-		return x;
+	ArrayList filterIRInfo(String packet)
+	{
+		ArrayList headsetBlobX = new ArrayList();
+		ArrayList headsetBlobY = new ArrayList();
+		ArrayList headsetBlobSize = new ArrayList();
+
+		ArrayList remainingIndexes = new ArrayList{0,1,2,3};
+
+		ArrayList finalInformationList = new ArrayList ();
+
+		string blob1 = "";
+		//string packet = ur.getLatestUDPPacket();
+		//Debug.Log (packet);
+		char[] delimiterChars = { ',' };
+		string[] parse = packet.Split (delimiterChars);
+
+		for (int i = 1; i <= 10; i += 3) {
+			headsetBlobX.Add (float.Parse (parse [i]));
+		}
+
+		for (int i = 2; i <= 11; i += 3) {
+			headsetBlobY.Add (float.Parse (parse [i]));
+		}
+
+		for (int i = 3; i <= 12; i += 3) {
+			headsetBlobSize.Add (float.Parse (parse [i]));
+		}
+
+		float biggestSize = -1;
+		int biggestSizeIndex = -1;
+		for (int i = 0; i < 4; i++) {
+			if ((float)(headsetBlobSize[i]) > biggestSize) {
+				biggestSizeIndex = i;
+				biggestSize = (float) headsetBlobSize[i];
+			}
+		}
+
+		finalInformationList.Add (headsetBlobX [biggestSizeIndex]);
+		finalInformationList.Add (headsetBlobY [biggestSizeIndex]);
+		finalInformationList.Add (headsetBlobSize [biggestSizeIndex]);
+
+		remainingIndexes.Remove (biggestSizeIndex);
+
+		// clicking x,y,blobsize are first 3 parameters in final list now 
+
+		float smallestSize = (float)headsetBlobX[0];
+		int smallestSizeIndex = 0;
+		foreach (int i in remainingIndexes) {
+			if ((float)headsetBlobX[i] < smallestSize) {
+				smallestSizeIndex = i;
+				smallestSize = (float) headsetBlobX[i];
+			}
+		}
+
+		finalInformationList.Add (headsetBlobX [smallestSizeIndex]);
+		finalInformationList.Add (headsetBlobY [smallestSizeIndex]);
+
+		remainingIndexes.Remove (smallestSizeIndex);
+
+		// clicking x,y,blobsize, left side x,y are in the final list now
+
+		int largestSizeIndex = -1;
+		int firstIndex = (int) remainingIndexes [0];
+		int secondIndex = (int) remainingIndexes [1];
+		if ((float) (headsetBlobX [firstIndex]) > (float)(headsetBlobX [secondIndex])) {
+			largestSizeIndex = 0;
+		} else {
+			largestSizeIndex = 1;
+		}
+
+		finalInformationList.Add (headsetBlobX [largestSizeIndex]);
+		finalInformationList.Add (headsetBlobY [largestSizeIndex]);
+
+		remainingIndexes.Remove (largestSizeIndex);
+
+		// clicking x,y,blocksize, left side x,y,  right side x,y are in the final list now
+
+		int middleIndex = (int) remainingIndexes[0];
+		finalInformationList.Add (headsetBlobX [middleIndex]);
+		finalInformationList.Add (headsetBlobY [middleIndex]);
+		//		for (int i = 0; i < 9; i++) {
+		//			Debug.Log (finalInformationList [i]);
+		//		}
+
+		return finalInformationList;
 	}
 }
