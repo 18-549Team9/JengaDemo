@@ -53,12 +53,12 @@ public class HeadTrack : MonoBehaviour {
 
 	bool updateHead () {
 		ArrayList temp = filterIRInfo(ur.getLatestUDPPacket());
-		firstPoint.x = (float)temp [3];
-		firstPoint.y = (float)temp [4];
-		secondPoint.x = (float)temp [5];
-		secondPoint.y = (float)temp [6];
-		topPoint.x = (float)temp [7];
-		topPoint.y = (float)temp [8];
+		firstPoint.x = (float)temp [0];
+		firstPoint.y = (float)temp [1];
+		secondPoint.x = (float)temp [3];
+		secondPoint.y = (float)temp [4];
+		topPoint.x = (float)temp [5];
+		topPoint.y = (float)temp [6];
 
 		if (firstPoint.x == -1 || firstPoint.y == -1 ||
 			secondPoint.x == -1 || secondPoint.y == -1 ||
@@ -87,19 +87,23 @@ public class HeadTrack : MonoBehaviour {
 
 	ArrayList filterIRInfo(String packet)
 	{
-		ArrayList headsetBlobX = new ArrayList();
-		ArrayList headsetBlobY = new ArrayList();
-		ArrayList headsetBlobSize = new ArrayList();
-
-		ArrayList remainingIndexes = new ArrayList{0,1,2,3};
-
 		ArrayList finalInformationList = new ArrayList ();
+		ArrayList headsetBlobX = new ArrayList ();
+		ArrayList headsetBlobY = new ArrayList ();
+		ArrayList headsetBlobSize = new ArrayList ();
+
+		ArrayList remainingIndexes = new ArrayList{ 0, 1, 2, 3 };
 
 		string blob1 = "";
 		//string packet = ur.getLatestUDPPacket();
-		//Debug.Log (packet);
+		string newPacket = packet.Substring (1, packet.Length - 3);
 		char[] delimiterChars = { ',' };
-		string[] parse = packet.Split (delimiterChars);
+		string[] parse = newPacket.Split (delimiterChars);
+		Debug.Log ("parse length");
+		Debug.Log (parse.Length);
+
+		Debug.Log (newPacket);
+		Debug.Log (parse [12]);
 
 		for (int i = 1; i <= 10; i += 3) {
 			headsetBlobX.Add (float.Parse (parse [i]));
@@ -113,12 +117,12 @@ public class HeadTrack : MonoBehaviour {
 			headsetBlobSize.Add (float.Parse (parse [i]));
 		}
 
-		float biggestSize = -1;
-		int biggestSizeIndex = -1;
+		float biggestSize = (float)headsetBlobX [0];
+		int biggestSizeIndex = 0;
 		for (int i = 0; i < 4; i++) {
-			if ((float)(headsetBlobSize[i]) > biggestSize) {
+			if ((float)(headsetBlobSize [i]) > biggestSize) {
 				biggestSizeIndex = i;
-				biggestSize = (float) headsetBlobSize[i];
+				biggestSize = (float)headsetBlobSize [i];
 			}
 		}
 
@@ -130,12 +134,12 @@ public class HeadTrack : MonoBehaviour {
 
 		// clicking x,y,blobsize are first 3 parameters in final list now 
 
-		float smallestSize = (float)headsetBlobX[0];
+		float smallestSize = (float)headsetBlobX [0];
 		int smallestSizeIndex = 0;
 		foreach (int i in remainingIndexes) {
-			if ((float)headsetBlobX[i] < smallestSize) {
+			if ((float)headsetBlobX [i] < smallestSize) {
 				smallestSizeIndex = i;
-				smallestSize = (float) headsetBlobX[i];
+				smallestSize = (float)headsetBlobX [i];
 			}
 		}
 
@@ -147,9 +151,9 @@ public class HeadTrack : MonoBehaviour {
 		// clicking x,y,blobsize, left side x,y are in the final list now
 
 		int largestSizeIndex = -1;
-		int firstIndex = (int) remainingIndexes [0];
-		int secondIndex = (int) remainingIndexes [1];
-		if ((float) (headsetBlobX [firstIndex]) > (float)(headsetBlobX [secondIndex])) {
+		int firstIndex = (int)remainingIndexes [0];
+		int secondIndex = (int)remainingIndexes [1];
+		if ((float)(headsetBlobX [firstIndex]) > (float)(headsetBlobX [secondIndex])) {
 			largestSizeIndex = 0;
 		} else {
 			largestSizeIndex = 1;
@@ -162,13 +166,14 @@ public class HeadTrack : MonoBehaviour {
 
 		// clicking x,y,blocksize, left side x,y,  right side x,y are in the final list now
 
-		int middleIndex = (int) remainingIndexes[0];
+		int middleIndex = (int)remainingIndexes [0];
 		finalInformationList.Add (headsetBlobX [middleIndex]);
 		finalInformationList.Add (headsetBlobY [middleIndex]);
 		//		for (int i = 0; i < 9; i++) {
 		//			Debug.Log (finalInformationList [i]);
 		//		}
 
+		Debug.Log (finalInformationList);
 		return finalInformationList;
 	}
 }

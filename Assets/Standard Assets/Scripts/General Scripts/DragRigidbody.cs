@@ -65,19 +65,23 @@ public class DragRigidbody : MonoBehaviour {
 
 	ArrayList filterIRInfo(String packet)
 	{
-		ArrayList headsetBlobX = new ArrayList();
-		ArrayList headsetBlobY = new ArrayList();
-		ArrayList headsetBlobSize = new ArrayList();
-
-		ArrayList remainingIndexes = new ArrayList{0,1,2,3};
-
 		ArrayList finalInformationList = new ArrayList ();
+		ArrayList headsetBlobX = new ArrayList ();
+		ArrayList headsetBlobY = new ArrayList ();
+		ArrayList headsetBlobSize = new ArrayList ();
+
+		ArrayList remainingIndexes = new ArrayList{ 0, 1, 2, 3 };
 
 		string blob1 = "";
 		//string packet = ur.getLatestUDPPacket();
-		//Debug.Log (packet);
+		string newPacket = packet.Substring (1, packet.Length - 3);
 		char[] delimiterChars = { ',' };
-		string[] parse = packet.Split (delimiterChars);
+		string[] parse = newPacket.Split (delimiterChars);
+		Debug.Log ("parse length");
+		Debug.Log (parse.Length);
+
+		Debug.Log (newPacket);
+		Debug.Log (parse [12]);
 
 		for (int i = 1; i <= 10; i += 3) {
 			headsetBlobX.Add (float.Parse (parse [i]));
@@ -91,12 +95,12 @@ public class DragRigidbody : MonoBehaviour {
 			headsetBlobSize.Add (float.Parse (parse [i]));
 		}
 
-		float biggestSize = -1;
-		int biggestSizeIndex = -1;
+		float biggestSize = (float)headsetBlobX [0];
+		int biggestSizeIndex = 0;
 		for (int i = 0; i < 4; i++) {
-			if ((float)(headsetBlobSize[i]) > biggestSize) {
+			if ((float)(headsetBlobSize [i]) > biggestSize) {
 				biggestSizeIndex = i;
-				biggestSize = (float) headsetBlobSize[i];
+				biggestSize = (float)headsetBlobSize [i];
 			}
 		}
 
@@ -108,12 +112,12 @@ public class DragRigidbody : MonoBehaviour {
 
 		// clicking x,y,blobsize are first 3 parameters in final list now 
 
-		float smallestSize = (float)headsetBlobX[0];
+		float smallestSize = (float)headsetBlobX [0];
 		int smallestSizeIndex = 0;
 		foreach (int i in remainingIndexes) {
-			if ((float)headsetBlobX[i] < smallestSize) {
+			if ((float)headsetBlobX [i] < smallestSize) {
 				smallestSizeIndex = i;
-				smallestSize = (float) headsetBlobX[i];
+				smallestSize = (float)headsetBlobX [i];
 			}
 		}
 
@@ -125,9 +129,9 @@ public class DragRigidbody : MonoBehaviour {
 		// clicking x,y,blobsize, left side x,y are in the final list now
 
 		int largestSizeIndex = -1;
-		int firstIndex = (int) remainingIndexes [0];
-		int secondIndex = (int) remainingIndexes [1];
-		if ((float) (headsetBlobX [firstIndex]) > (float)(headsetBlobX [secondIndex])) {
+		int firstIndex = (int)remainingIndexes [0];
+		int secondIndex = (int)remainingIndexes [1];
+		if ((float)(headsetBlobX [firstIndex]) > (float)(headsetBlobX [secondIndex])) {
 			largestSizeIndex = 0;
 		} else {
 			largestSizeIndex = 1;
@@ -140,7 +144,7 @@ public class DragRigidbody : MonoBehaviour {
 
 		// clicking x,y,blocksize, left side x,y,  right side x,y are in the final list now
 
-		int middleIndex = (int) remainingIndexes[0];
+		int middleIndex = (int)remainingIndexes [0];
 		finalInformationList.Add (headsetBlobX [middleIndex]);
 		finalInformationList.Add (headsetBlobY [middleIndex]);
 //		for (int i = 0; i < 9; i++) {
@@ -163,10 +167,16 @@ public class DragRigidbody : MonoBehaviour {
 
 	void Update ()
 	{
-		ArrayList temp = filterIRInfo (ur.lastReceivedUDPPacket);
+		string packet = ur.getLatestUDPPacket();
+		if (packet.Equals ("")) {
+			Debug.Log ("changing packet");
+			packet = "[103238, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]";
+		}
+		ArrayList temp = filterIRInfo (packet);
+		Debug.Log (temp [2]);
 		float temp1 = (float)temp[0];
 		float temp2 = (float)temp[1];
-		int temp3 = (int)temp [2];
+		int temp3 = Convert.ToInt32(temp [2]);
 		if (temp1 != -1 || temp2 != -1 || temp3 != -1) {
 			x = (int) (temp1 * xScaling);
 			y = Screen.height - (int) (temp2 * yScaling);
