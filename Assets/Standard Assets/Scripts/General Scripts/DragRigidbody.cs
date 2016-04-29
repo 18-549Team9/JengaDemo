@@ -82,7 +82,6 @@ public class DragRigidbody : MonoBehaviour {
 			packet = "[103238, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]";
 		}
 		ArrayList temp = ur.filterIRInfo ();
-		Debug.Log (temp [2]);
 		float temp1 = (float)temp[0];
 		float temp2 = (float)temp[1];
 		int temp3 = Convert.ToInt32(temp [2]);

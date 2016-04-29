@@ -66,15 +66,14 @@ public class UDPReceive : MonoBehaviour {
 
 		Dictionary<string,string> dict = new Dictionary<string,string>
 		{
-			{"ip", "169.254.130.148"},
-			{"port", "21366" }
+			{"ip", "169.254.54.226"},
+			{"port", "12345" }
 		};
 			
 
 		WWW requestPOST = hr.POST("raspberrypi.local/start", dict);
 
 		yield return requestPOST;
-
 
 		init ();
 
@@ -101,7 +100,7 @@ public class UDPReceive : MonoBehaviour {
 	{
 
 		// define port
-		port = 21366;
+		port = 12345;
 
 		// status
 		//print("Sending to 169.254.142.188 : "+port);
@@ -118,20 +117,20 @@ public class UDPReceive : MonoBehaviour {
 	private  void ReceiveData()
 	{
 
-		Debug.Log ("receiving data");
+		//Debug.Log ("receiving data");
 		client = new UdpClient(port);
-		Debug.Log ("successfully started client");
+		//Debug.Log ("successfully started client");
 		while (true)
 		{	
-			Debug.Log ("going inside loop");
+			//Debug.Log ("going inside loop");
 			try
 			{
-				Debug.Log ("inside try");
+				//Debug.Log ("inside try");
 				IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
-				Debug.Log ("right before client.receive");
+				//Debug.Log ("right before client.receive");
 
 				byte[] data = client.Receive(ref anyIP);
-				Debug.Log ("after client.receive");
+				//Debug.Log ("after client.receive");
 			
 				string text = Encoding.UTF8.GetString(data);
 
@@ -166,21 +165,16 @@ public class UDPReceive : MonoBehaviour {
 	public ArrayList filterIRInfo()
 	{
 		string packet = getLatestUDPPacket ();
+
 		ArrayList finalInformationList = new ArrayList ();
 		ArrayList headsetBlobX = new ArrayList ();
 		ArrayList headsetBlobY = new ArrayList ();
 		ArrayList headsetBlobSize = new ArrayList ();
-
 		ArrayList remainingIndexes = new ArrayList{ 0, 1, 2, 3 };
 
 		string newPacket = packet.Substring (1, packet.Length - 3);
 		char[] delimiterChars = { ',' };
 		string[] parse = newPacket.Split (delimiterChars);
-		Debug.Log ("parse length");
-		Debug.Log (parse.Length);
-
-		Debug.Log (newPacket);
-		Debug.Log (parse [12]);
 
 		for (int i = 1; i <= 10; i += 3) {
 			headsetBlobX.Add (float.Parse (parse [i]));
@@ -194,7 +188,7 @@ public class UDPReceive : MonoBehaviour {
 			headsetBlobSize.Add (float.Parse (parse [i]));
 		}
 
-		float biggestSize = (float)headsetBlobX [0];
+		float biggestSize = (float)headsetBlobSize [0];
 		int biggestSizeIndex = 0;
 		for (int i = 0; i < 4; i++) {
 			if ((float)(headsetBlobSize [i]) > biggestSize) {
@@ -250,7 +244,15 @@ public class UDPReceive : MonoBehaviour {
 		//			Debug.Log (finalInformationList [i]);
 		//		}
 
-		Debug.Log (finalInformationList);
+
+		StringBuilder sb = new StringBuilder();
+		foreach (object obj in finalInformationList) {
+			sb.Append (", ");
+			sb.Append(obj);
+		}
+		string s = sb.ToString();
+		Debug.Log (s);
+
 		return finalInformationList;
 	}
 }
