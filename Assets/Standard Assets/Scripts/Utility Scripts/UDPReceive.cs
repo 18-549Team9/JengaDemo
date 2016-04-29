@@ -247,11 +247,11 @@ public class UDPReceive : MonoBehaviour {
 
 		StringBuilder sb = new StringBuilder();
 		foreach (object obj in finalInformationList) {
-			sb.Append (", ");
 			sb.Append(obj);
+			sb.Append (", ");
 		}
 		string s = sb.ToString();
-		Debug.Log (s);
+		//Debug.Log (s);
 
 		return finalInformationList;
 	}

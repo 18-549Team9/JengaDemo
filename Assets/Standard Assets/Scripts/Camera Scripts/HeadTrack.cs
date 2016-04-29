@@ -7,6 +7,7 @@ public class HeadTrack : MonoBehaviour {
 
 	public Transform Target;
 
+	bool firstPass = true;
 	Vector3 headPosition = new Vector3(0,0,0);
 
 	Vector2 firstPoint;
@@ -34,7 +35,14 @@ public class HeadTrack : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (updateHead ()) {
-			Vector3 newHeadPosition = new Vector3 (headX, headY, headDist);
+			Vector3 newHeadPosition;
+			if (firstPass) {
+				newHeadPosition = new Vector3 (headX, headY, headDist);
+				headPosition = newHeadPosition;
+				firstPass = false;
+			}
+			Debug.Log (headX + ", " + headY + ", " + headDist);
+			newHeadPosition = new Vector3 (headX, headY, headDist);
 			Vector3 translation = newHeadPosition - headPosition;
 
 			transform.Translate (translation);
