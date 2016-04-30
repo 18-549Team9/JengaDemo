@@ -37,7 +37,7 @@ public class HeadTrack : MonoBehaviour {
 		if (updateHead ()) {
 			Vector3 newHeadPosition;
 			if (firstPass) {
-				newHeadPosition = new Vector3 (headX, headY, headDist);
+				newHeadPosition = new Vector3 (headX, headY, -headDist);
 				headPosition = newHeadPosition;
 				firstPass = false;
 			}
