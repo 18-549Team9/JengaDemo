@@ -18,7 +18,7 @@ public class HeadTrack : MonoBehaviour {
 	public int IRHeight = 768;
 	private float headX = 512; // x coordinate center
 	private float headY = 384; // y coordinate center
-	private float headDist = 5;
+	private float headDist = 15;
 
 	const float radiansPerPixel = (float)(Mathf.PI / 4.0f) / 1024.0f;
 	const float dotDistanceInMM = 162.0f;

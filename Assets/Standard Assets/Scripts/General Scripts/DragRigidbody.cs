@@ -9,6 +9,8 @@ public class DragRigidbody : MonoBehaviour {
 	public float drag = 10.0f;
 	public float angularDrag = 5.0f;
 	public float distance = 0.2f;
+	private float prev;
+
 	public bool attachToCenterOfMass = false;
 	public Camera mainCamera;
 	public RaycastHit hit;
@@ -23,6 +25,8 @@ public class DragRigidbody : MonoBehaviour {
 	private int blob;
 	public bool didReadSuccess = false;
 	public Vector2 position;
+
+
 
 	bool getButtonPress() {
 		if (blob >= 4)
@@ -86,8 +90,13 @@ public class DragRigidbody : MonoBehaviour {
 		float temp2 = (float)temp[1];
 		int temp3 = Convert.ToInt32(temp [2]);
 		if (temp1 != -1 || temp2 != -1 || temp3 != -1) {
-			x = (int) (temp1 * xScaling);
-			y = Screen.height - (int) (temp2 * yScaling);
+			int newx = (int) (temp1 * xScaling);
+			int newy = Screen.height - (int) (temp2 * yScaling);
+			int difference = Math.Abs ((x + y) - (newx + newy));
+			if (difference > 100)
+				return;
+			x = newx;
+			y = newy;
 			blob = temp3;
 		}
 		//Debug.Log (x);

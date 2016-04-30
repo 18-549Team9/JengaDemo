@@ -22,7 +22,9 @@ using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.NetworkInformation;
 using System.Threading;
+using System.Linq;
 
 public class UDPReceive : MonoBehaviour {
 
@@ -32,10 +34,7 @@ public class UDPReceive : MonoBehaviour {
 	// udpclient object
 	UdpClient client;
 
-	// public
-	//public string IP = "169.254.205.210"; 
-	public string IP = "169.254.130.148";
-	public int port; // define > init
+	public int port = 12345;
 
 	// infos
 	public string lastReceivedUDPPacket="";
@@ -64,10 +63,12 @@ public class UDPReceive : MonoBehaviour {
 		WWW requestGET = hr.GET("raspberrypi.local/status");
 		yield return requestGET;
 
+		Debug.Log (GetAllLocalIPv4(NetworkInterfaceType.Ethernet).FirstOrDefault());
+
 		Dictionary<string,string> dict = new Dictionary<string,string>
 		{
-			{"ip", "169.254.54.226"},
-			{"port", "12345" }
+			{"ip", GetAllLocalIPv4(NetworkInterfaceType.Ethernet).FirstOrDefault()},
+			{"port", port.ToString() }
 		};
 			
 
@@ -81,31 +82,11 @@ public class UDPReceive : MonoBehaviour {
 		yield return requestGET;
 
 	}
-
-	// OnGUI
-	void OnGUI()
-	{
-//		Rect rectObj=new Rect(40,10,200,400);
-//		GUIStyle style = new GUIStyle();
-//		style.alignment = TextAnchor.UpperLeft;
-//		GUI.Box(rectObj,"# UDPReceive\n169.254.142.188 "+port+" #\n"
-//			+ "shell> nc -u 169.254.142.188 : "+port+" \n"
-//			+ "\nLast Packet: \n"+ lastReceivedUDPPacket
-//			+ "\n\nAll Messages: \n"+allReceivedUDPPackets
-//			,style);
-	}
+		
 
 	// init
 	private void init()
 	{
-
-		// define port
-		port = 12345;
-
-		// status
-		//print("Sending to 169.254.142.188 : "+port);
-		//print("Test-Sending to this Port: nc -ul 169.254.27.195  "+port+"");
-
 		receiveThread = new Thread(
 			new ThreadStart(ReceiveData));
 		receiveThread.IsBackground = true;
@@ -251,8 +232,27 @@ public class UDPReceive : MonoBehaviour {
 			sb.Append (", ");
 		}
 		string s = sb.ToString();
-		//Debug.Log (s);
+		Debug.Log (s);
 
 		return finalInformationList;
+	}
+
+	private string[] GetAllLocalIPv4(NetworkInterfaceType _type)
+	{
+		List<string> ipAddrList = new List<string>();
+		foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
+		{
+			if (item.NetworkInterfaceType == _type && item.OperationalStatus == OperationalStatus.Up)
+			{
+				foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
+				{
+					if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+					{
+						ipAddrList.Add(ip.Address.ToString());
+					}
+				}
+			}
+		}
+		return ipAddrList.ToArray();
 	}
 }
