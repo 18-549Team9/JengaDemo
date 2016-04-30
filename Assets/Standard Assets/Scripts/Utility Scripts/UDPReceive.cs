@@ -34,7 +34,7 @@ public class UDPReceive : MonoBehaviour {
 	// udpclient object
 	UdpClient client;
 
-	public int port = 12345;
+	public int port;
 
 	// infos
 	public string lastReceivedUDPPacket="";
@@ -55,6 +55,7 @@ public class UDPReceive : MonoBehaviour {
 		}
 		while(!text.Equals("exit"));
 	}
+
 	// start from unity3d
 	public IEnumerator Start()
 	{
@@ -63,14 +64,13 @@ public class UDPReceive : MonoBehaviour {
 		WWW requestGET = hr.GET("raspberrypi.local/status");
 		yield return requestGET;
 
-		Debug.Log (GetAllLocalIPv4(NetworkInterfaceType.Ethernet).FirstOrDefault());
+		port = 12345;
 
 		Dictionary<string,string> dict = new Dictionary<string,string>
 		{
-			{"ip", GetAllLocalIPv4(NetworkInterfaceType.Ethernet).FirstOrDefault()},
+			{"ip", Network.player.ipAddress.ToString()},
 			{"port", port.ToString() }
 		};
-			
 
 		WWW requestPOST = hr.POST("raspberrypi.local/start", dict);
 
@@ -235,24 +235,5 @@ public class UDPReceive : MonoBehaviour {
 		Debug.Log (s);
 
 		return finalInformationList;
-	}
-
-	private string[] GetAllLocalIPv4(NetworkInterfaceType _type)
-	{
-		List<string> ipAddrList = new List<string>();
-		foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
-		{
-			if (item.NetworkInterfaceType == _type && item.OperationalStatus == OperationalStatus.Up)
-			{
-				foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
-				{
-					if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
-					{
-						ipAddrList.Add(ip.Address.ToString());
-					}
-				}
-			}
-		}
-		return ipAddrList.ToArray();
 	}
 }
